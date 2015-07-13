@@ -48,7 +48,15 @@ public:
              unsigned int       _taper_len,
              unsigned char *    _p,
              framesync_callback _callback,
+             void *             _userdata,
+             char *             _usrp_addr);
+    ofdmtxrx(unsigned int       _M,
+             unsigned int       _cp_len,
+             unsigned int       _taper_len,
+             unsigned char *    _p,
+             framesync_callback _callback,
              void *             _userdata);
+
 
     // destructor
     ~ofdmtxrx();
@@ -99,6 +107,8 @@ private:
     //  _timeout    :   time before timeout
     void set_timespec(struct timespec * _ts,
                       float             _timeout);
+
+    char usrp_addr[100];
 
     // OFDM properties
     unsigned int M;                 // number of subcarriers

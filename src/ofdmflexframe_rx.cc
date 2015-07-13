@@ -92,6 +92,7 @@ void usage() {
     printf("  T     :   taper length,          default:    4\n");
     printf("  t     :   run time [seconds],    default:    5\n");
     printf("  d     :   enable debugging mode\n");
+    printf("  a     :   USRP Address String,    default: none\n");
 }
 
 int main (int argc, char **argv)
@@ -112,9 +113,12 @@ int main (int argc, char **argv)
 
     int debug_enabled =  0;             // enable debugging?
 
+    // USRP Address string
+    char * usrp_addr = (char *) "";
+
     //
     int d;
-    while ((d = getopt(argc,argv,"uhqvf:b:G:A:M:C:T:t:d")) != EOF) {
+    while ((d = getopt(argc,argv,"uhqvf:b:G:A:M:C:T:t:da:")) != EOF) {
         switch (d) {
         case 'u':
         case 'h':   usage();                            return 0;
@@ -129,6 +133,7 @@ int main (int argc, char **argv)
         case 'T':   taper_len     = atoi(optarg);       break;
         case 't':   num_seconds   = atof(optarg);       break;
         case 'd':   debug_enabled = 1;                  break;
+        case 'a':   usrp_addr   = optarg;               break;
         default:
             usage();
             return 0;
@@ -142,7 +147,7 @@ int main (int argc, char **argv)
 
     // create transceiver object
     unsigned char * p = NULL;   // default subcarrier allocation
-    ofdmtxrx txcvr(M, cp_len, taper_len, p, callback, (void*)&bandwidth);
+    ofdmtxrx txcvr(M, cp_len, taper_len, p, callback, (void*)&bandwidth, usrp_addr);
 
     // set properties
     txcvr.set_rx_freq(frequency);
