@@ -33,6 +33,7 @@ void usage() {
     printf("\n");
     printf("  u,h   : usage/help\n");
     printf("  q/v   : quiet/verbose\n");
+    printf("  a     : USRP Address String,    default: none\n");
     printf("  f     : center frequency [Hz],  default:  462 MHz\n");
     printf("  b     : bandwidth [Hz],         default: 1000 kHz\n");
     printf("  g     : software tx gain [dB],  default:  -12 dB \n");
@@ -70,10 +71,13 @@ int main (int argc, char **argv)
     //crc_scheme check = LIQUID_CRC_32;       // data validity check
     fec_scheme fec0 = LIQUID_FEC_NONE;      // fec (inner)
     fec_scheme fec1 = LIQUID_FEC_GOLAY2412; // fec (outer)
+
+    // USRP Address string
+    char * usrp_addr = (char *) "";
     
     //
     int d;
-    while ((d = getopt(argc,argv,"uhqvf:b:g:G:N:M:C:T:P:m:c:k:")) != EOF) {
+    while ((d = getopt(argc,argv,"uhqvf:b:g:G:N:M:C:T:P:m:c:k:a:")) != EOF) {
         switch (d) {
         case 'u':
         case 'h':   usage();                        return 0;
@@ -91,6 +95,7 @@ int main (int argc, char **argv)
         case 'm':   ms          = liquid_getopt_str2mod(optarg);    break;
         case 'c':   fec0        = liquid_getopt_str2fec(optarg);    break;
         case 'k':   fec1        = liquid_getopt_str2fec(optarg);    break;
+        case 'a':   usrp_addr   = optarg;           break;
         default:    usage();                        return 0;
         }
     }
@@ -111,7 +116,7 @@ int main (int argc, char **argv)
 
     // create transceiver object
     unsigned char * p = NULL;   // default subcarrier allocation
-    ofdmtxrx txcvr(M, cp_len, taper_len, p, NULL, NULL);
+    ofdmtxrx txcvr(M, cp_len, taper_len, p, NULL, NULL, usrp_addr);
 
     // set properties
     txcvr.set_tx_freq(frequency);

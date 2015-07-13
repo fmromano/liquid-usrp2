@@ -42,6 +42,7 @@ void usage() {
     printf("  G     : uhd rx gain [dB],        default:   20 dB\n");
     printf("  L     : record length [samples], default: 1200 samples\n");
     printf("  o     : output filename,         default: rssi_results.m\n");
+    printf("  a     : USRP Address String,     default: none\n");
 }
 
 int main (int argc, char **argv)
@@ -58,9 +59,12 @@ int main (int argc, char **argv)
     unsigned int log_size = 1200;
     char filename[256] = "rssi_results.m";
 
+    // USRP Address string
+    char * usrp_addr = (char *) "";
+
     //
     int d;
-    while ((d = getopt(argc,argv,"hvqf:b:t:G:L:o:")) != EOF) {
+    while ((d = getopt(argc,argv,"hvqf:b:t:G:L:o:a:")) != EOF) {
         switch (d) {
         case 'h':   usage();                        return 0;
         case 'v':   verbose = true;                 break;
@@ -71,6 +75,7 @@ int main (int argc, char **argv)
         case 'G':   uhd_rxgain = atof(optarg);      break;
         case 'L':   log_size = atoi(optarg);        break;
         case 'o':   strncpy(filename,optarg,255);   break;
+        case 'a':   usrp_addr   = optarg;           break;
         default:
             return 1;
         }
@@ -84,7 +89,7 @@ int main (int argc, char **argv)
 
     stream_cmd.stream_now = true;
 
-    uhd::device_addr_t dev_addr;
+    uhd::device_addr_t dev_addr(usrp_addr);
     uhd::usrp::multi_usrp::sptr usrp = uhd::usrp::multi_usrp::make(dev_addr);
 
     // try to set hardware rx rate
